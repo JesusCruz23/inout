@@ -1,0 +1,1004 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title id="titulopagina"> PHF SOFTWARE </title>
+
+<link rel="stylesheet" href="{{ asset('build/assets/app.css') }}">
+<link rel="stylesheet" href="{{ asset('css/app.css') }}">
+<link rel="stylesheet" href="{{ asset('css/c3.css') }}">
+<link rel="stylesheet" href="{{ asset('css/all.css') }}">
+{{--  <link rel="stylesheet" href="{{ asset('css/boostrap502.css') }}">  --}}
+
+
+{{--  Importando js de C3 para las graficas y Ajax para la consulta de la tabla index  --}}
+<script src="{{ URL::asset('js/c3.js') }}"></script>
+<script src="{{ URL::asset('js/d3-v5-min.js') }}"></script>
+<script src="{{ URL::asset('build/assets/app.js') }}"></script>
+<script src="{{ URL::asset('js/ajax.js') }}"></script>
+<script src="{{ URL::asset('js/all.js') }}"></script>
+
+<script src="{{ URL::asset('js/popper.min.js') }}"></script>
+<script src="{{ URL::asset('js/bootstrap.min.js') }}"></script>
+{{--  -----------------------------------------------------------------------  --}}
+
+
+<div class="row mt-1" style="width:100%; height:100%; background-color: rgb(255, 255, 255)" id="photo">
+
+    {{--  col-12 para vista en celular
+        col-lg-6 Para vista en tablet
+        col-xxl-3 para vista en pc  --}}
+
+    <div class="col-12 col-lg-9 col-xxl-9 d-flex">
+        <div class="card flex-fill w-100">
+            <div class="card-header bg-dark bg-gradient text-light">
+                <span> GRAFICA </span>
+            </div>
+            <div class="card-body">
+                <span id="rango_fechas" style="display: none;"> {{ $rango_fechas }}</span>
+                <h1 id="nomarea"
+                    style="font-family:Lobster; font-weight: 600; font-size: 18px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); text-align: center">
+                    {{ $nombre_area }}</h1>
+                <h1 id="fechas"
+                    style="font-family:Lobster; font-weight: 100; font-size: 12px; background-color: rgb(255, 255, 255); color: rgb(0, 0, 0); text-align: center">
+                    {{ $fecha }}</h1>
+                <br><br>
+                <div class="contenedor_individual" id="dbchart"></div>
+            </div>
+
+            <div class="card-footer">
+                <div style="margin-bottom:30px">
+                    <strong><span style='font-size: 10px; color:rgb(179, 179, 179);'>DESARROLLADO
+                            POR:</span></strong><br>
+                    <span style='font-size: 10px; color:rgb(179, 179, 179);'>AIM INGENIERIA SA DE CV</span><br>
+                    <span style='font-size: 10px; color:rgb(179, 179, 179);'>VALLE BALAM 115</span><br>
+                    <span style='font-size: 10px; color:rgb(179, 179, 179);'>COL.VALLE ANTIGUA, LEON, GTO
+                        37353:</span><br>
+                    <span style='font-size: 10px;'><a style="color:rgb(179, 179, 179);"
+                            href="https://www.aimingenieria.com/">AIMINGENIERIA.COM</a></span>
+                </div>
+
+                <div style="display: none">
+                    <table id="tablaExcel" class="table" data-export-title="excel">
+                        <thead id="encabezado">
+                            <tr>
+                                <th> PLUMA 1 </th>
+                                <th> PLUMA 2 </th>
+                                <th> PLUMA 3 </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablacontenido">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-0 col-lg-3 col-xxl-3 d-flex">
+        <div class="card">
+            <div class="card-header bg-dark bg-gradient text-light">
+                <span> PLUMAS </span>
+            </div>
+            <div class="card-body">
+                <div class="plumas_contenedor_plu">
+                    <div class="plumas_inout">
+                        <div class="d-grid gap-2">
+                            <strong><span class="indicador_text" id="texto_indicador_1">Ninguno</span></strong>
+                            <input type="color" id="colorpicker_1" value="#1f77b4" class="indicador_color">
+
+                            <div class="dropdown">
+                                <button style="width: 100%" class="btn btn-light dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    PLUMA 1
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdown_user" id="getid">
+                                    <form class="px-2 py-2">
+                                        <input type="search" class="form-control search" placeholder="Filtrar"
+                                            autofocus="autofocus">
+                                    </form>
+
+                                    <div class="menuItems_1">
+                                        @foreach ($columnas as $columna)
+                                            <input type="button" class="dropdown-item" type="button"
+                                                value={{ $columna['column_name'] }} />
+                                        @endforeach
+                                    </div>
+                                    <div style="display:none;" class="dropdown-header dropdown_empty">Sin resultados
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span style="display: none;" id="colorSeleccionado_1"></span>
+                        </div>
+                    </div>
+
+                    <div class="plumas_inout">
+                        <div class="d-grid gap-2">
+                            <strong><span class="indicador_text" id="texto_indicador_2">Ninguno </span></strong>
+                            <input type="color" id="colorpicker_2" value="#aec7e8" class="indicador_color">
+
+
+                            <div class="dropdown">
+                                <button style="width: 100%" class="btn btn-light dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    PLUMA 2
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdown_user">
+                                    <form class="px-2 py-2">
+                                        <input type="search" class="form-control search" placeholder="Filtrar"
+                                            autofocus="autofocus">
+                                    </form>
+                                    <div class="menuItems_2">
+                                        @foreach ($columnas as $columna)
+                                            <input type="button" class="dropdown-item" type="button"
+                                                value={{ $columna['column_name'] }} />
+                                        @endforeach
+                                    </div>
+                                    <div style="display:none;" class="dropdown-header dropdown_empty">Sin resultados
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <span style="display: none;" id="colorSeleccionado_2"></span>
+                        </div>
+                    </div>
+
+                    <div class="plumas_inout">
+                        <div class="d-grid gap-2">
+                            <strong><span class="indicador_text" id="texto_indicador_3">Ninguno</span></strong>
+                            <input type="color" id="colorpicker_3" value="#ff7f0e" class="indicador_color">
+                            <div class="dropdown">
+                                <button style="width: 100%" class="btn btn-light dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    PLUMA 3
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdown_user">
+                                    <form class="px-2 py-2">
+                                        <input type="search" class="form-control search" placeholder="Filtrar"
+                                            autofocus="autofocus">
+                                    </form>
+                                    <div class="menuItems_3">
+                                        @foreach ($columnas as $columna)
+                                            <input type="button" class="dropdown-item" type="button"
+                                                value={{ $columna['column_name'] }} />
+                                        @endforeach
+                                    </div>
+                                    <div style="display:none;" class="dropdown-header dropdown_empty">Sin resultados
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span style="display: none;" id="colorSeleccionado_3"></span>
+                        </div>
+                    </div>
+
+                    <div class="plumas_inout">
+                        <div class="d-grid gap-2">
+                            <strong><span class="indicador_text" id="texto_indicador_4">Ninguno</span></strong>
+                            <input type="color" id="colorpicker_4" value="#ffbb78" class="indicador_color">
+                            <div class="dropdown">
+                                <button style="width: 100%" class="btn btn-light dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    PLUMA 4
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdown_user">
+                                    <form class="px-2 py-2">
+                                        <input type="search" class="form-control search" placeholder="Filtrar"
+                                            autofocus="autofocus">
+                                    </form>
+                                    <div class="menuItems_4">
+                                        @foreach ($columnas as $columna)
+                                            <input type="button" class="dropdown-item" type="button"
+                                                value={{ $columna['column_name'] }} />
+                                        @endforeach
+                                    </div>
+                                    <div style="display:none;" class="dropdown-header dropdown_empty">Sin resultados
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span style="display: none;" id="colorSeleccionado_4"></span>
+                        </div>
+                    </div>
+
+                    <div class="plumas_inout">
+                        <div class="d-grid gap-2">
+                            <strong><span class="indicador_text" id="texto_indicador_5">Ninguno</span></strong>
+                            <input type="color" id="colorpicker_5" value="#2ca02c" class="indicador_color">
+                            <div class="dropdown">
+                                <button style="width: 100%" class="btn btn-light dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    PLUMA 5
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdown_user">
+                                    <form class="px-2 py-2">
+                                        <input type="search" class="form-control search" placeholder="Filtrar"
+                                            autofocus="autofocus">
+                                    </form>
+                                    <div class="menuItems_5">
+                                        @foreach ($columnas as $columna)
+                                            <input type="button" class="dropdown-item" type="button"
+                                                value={{ $columna['column_name'] }} />
+                                        @endforeach
+                                    </div>
+                                    <div style="display:none;" class="dropdown-header dropdown_empty">Sin resultados
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span style="display: none;" id="colorSeleccionado_5"></span>
+                        </div>
+                    </div>
+
+                    <div class="plumas_inout">
+                        <div class="d-grid gap-2">
+                            <strong><span class="indicador_text" id="texto_indicador_6">Ninguno</span></strong>
+                            <input type="color" id="colorpicker_6" value="#98df8a" class="indicador_color">
+                            <div class="dropdown">
+                                <button style="width: 100%" class="btn btn-light dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    PLUMA 6
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdown_user">
+                                    <form class="px-2 py-2">
+                                        <input type="search" class="form-control search" placeholder="Filtrar"
+                                            autofocus="autofocus">
+                                    </form>
+                                    <div class="menuItems_6">
+                                        @foreach ($columnas as $columna)
+                                            <input type="button" class="dropdown-item" type="button"
+                                                value={{ $columna['column_name'] }} />
+                                        @endforeach
+                                    </div>
+                                    <div style="display:none;" class="dropdown-header dropdown_empty">Sin resultados
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span style="display: none;" id="colorSeleccionado_6"></span>
+                        </div>
+                    </div>
+
+                    <div class="plumas_inout">
+                        <div class="d-grid gap-2">
+                            <strong><span class="indicador_text" id="texto_indicador_7">Ninguno</span></strong>
+                            <input type="color" id="colorpicker_7" value="#d62728" class="indicador_color">
+                            <div class="dropdown">
+                                <button style="width: 100%" class="btn btn-light dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    PLUMA 7
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdown_user">
+                                    <form class="px-2 py-2">
+                                        <input type="search" class="form-control search" placeholder="Filtrar"
+                                            autofocus="autofocus">
+                                    </form>
+                                    <div class="menuItems_7">
+                                        @foreach ($columnas as $columna)
+                                            <input type="button" class="dropdown-item" type="button"
+                                                value={{ $columna['column_name'] }} />
+                                        @endforeach
+                                    </div>
+                                    <div style="display:none;" class="dropdown-header dropdown_empty">Sin resultados
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span style="display: none;" id="colorSeleccionado_7"></span>
+                        </div>
+                    </div>
+
+                    <div class="plumas_inout">
+                        <div class="d-grid gap-2">
+                            <strong><span class="indicador_text" id="texto_indicador_8">Ninguno</span></strong>
+                            <input type="color" id="colorpicker_8" value="#ff9896" class="indicador_color">
+                            <div class="dropdown">
+                                <button style="width: 100%" class="btn btn-light dropdown-toggle" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    PLUMA 8
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdown_user">
+                                    <form class="px-2 py-2">
+                                        <input type="search" class="form-control search" placeholder="Filtrar"
+                                            autofocus="autofocus">
+                                    </form>
+                                    <div class="menuItems_8">
+                                        @foreach ($columnas as $columna)
+                                            <input type="button" class="dropdown-item" type="button"
+                                                value={{ $columna['column_name'] }} />
+                                        @endforeach
+                                    </div>
+                                    <div style="display:none;" class="dropdown-header dropdown_empty">Sin resultados
+                                    </div>
+                                </div>
+                            </div>
+
+                            <span style="display: none;" id="colorSeleccionado_8"></span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:40%">
+                        <button style="width: 100%;" class="button-consultar" role="button"
+                            onclick="limpiarPlumas()">
+                            <i class="fa-solid fa-trash-can fa-lg"></i> ➨ LIMPIAR PLUMAS
+                        </button>
+                    </div>
+
+
+
+                    <div style="width: 100%; margin-top:20px" id="div_btn">
+                        <button style="width: 48%; margin:0% 0%" class="button-consultar" role="button"
+                            onclick="graficar()">
+                            GRAFICAR
+                        </button>
+                        <button
+                            style="width: 48%; margin:0% 0%; background-color: rgb(17, 191, 17); border: rgb(7, 98, 7)"
+                            class="button-consultar" role="button" onclick="excel()">
+                            <i class="fa-solid fa-file-excel fa-lg"></i> ➤ EXPORTAR
+                        </button>
+                    </div>
+
+
+
+
+                    {{--  <a href="#openModal">Lanzar el modal</a>
+                    <div id="openModal" class="modalDialog">
+                        <div>
+                            <a href="#close" title="Close" class="close">X</a>
+                            <br>
+                        </div>
+                    </div>  --}}
+
+
+                </div>
+                {{--  <div class="plumas_contenedor_botones">
+                    <h1>aaaaaaaaaaaaa</h1>
+                </div>  --}}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{--  Obteniendo los el codigo de los colores de cada pluma  --}}
+<script>
+    var color1 = document.getElementById("colorpicker_1");
+    var color2 = document.getElementById("colorpicker_2");
+    var color3 = document.getElementById("colorpicker_3");
+    var color4 = document.getElementById("colorpicker_4");
+    var color5 = document.getElementById("colorpicker_5");
+    var color6 = document.getElementById("colorpicker_6");
+    var color7 = document.getElementById("colorpicker_7");
+    var color8 = document.getElementById("colorpicker_8");
+
+    color1.addEventListener('input', () => {
+        document.getElementById('colorSeleccionado_1').innerHTML = color1.value;
+    });
+    color2.addEventListener('input', () => {
+        document.getElementById('colorSeleccionado_2').innerHTML = color2.value;
+    });
+    color3.addEventListener('input', () => {
+        document.getElementById('colorSeleccionado_3').innerHTML = color3.value;
+    });
+    color4.addEventListener('input', () => {
+        document.getElementById('colorSeleccionado_4').innerHTML = color4.value;
+    });
+    color5.addEventListener('input', () => {
+        document.getElementById('colorSeleccionado_5').innerHTML = color5.value;
+    });
+    color6.addEventListener('input', () => {
+        document.getElementById('colorSeleccionado_6').innerHTML = color6.value;
+    });
+    color7.addEventListener('input', () => {
+        document.getElementById('colorSeleccionado_7').innerHTML = color7.value;
+    });
+    color8.addEventListener('input', () => {
+        document.getElementById('colorSeleccionado_8').innerHTML = color8.value;
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        document.getElementById('colorSeleccionado_1').innerHTML = "#1f77b4";
+        document.getElementById('colorSeleccionado_2').innerHTML = "#aec7e8";
+        document.getElementById('colorSeleccionado_3').innerHTML = "#ff7f0e";
+        document.getElementById('colorSeleccionado_4').innerHTML = "#ffbb78";
+        document.getElementById('colorSeleccionado_5').innerHTML = "#2ca02c";
+        document.getElementById('colorSeleccionado_6').innerHTML = "#98df8a";
+        document.getElementById('colorSeleccionado_7').innerHTML = "#d62728";
+        document.getElementById('colorSeleccionado_8').innerHTML = "#ff9896";
+    });
+</script>
+
+<script>
+    function limpiarPlumas() {
+        for (var i = 1; i <= 8; i++) {
+            document.getElementById("texto_indicador_" + i).innerText = 'Ninguno';
+        }
+        document.getElementById("dbchart").style.display = "none";
+    }
+
+    function graficar() {
+        //Verificando si todas las plumas son Ninguno, si es asi entonces no se ha escogido ninguna columna para graficar.
+        var contador = 0;
+        for (var i = 1; i <= 8; i++)
+        
+        {
+            if (document.getElementById("texto_indicador_" + i).innerText == 'Ninguno') {
+                contador++;
+            }
+        }
+
+        //Funcion para ocultar y desocultar el div de la grafica.
+        if (contador == 8) {
+            document.getElementById("dbchart").style.display = "none";
+        } else {
+            document.getElementById("dbchart").style.display = "block";
+        }
+
+
+        const arrayColumnas = [];
+        //Guardando todas las columnas escogidas en un arreglo.
+        for (var i = 1; i <= 8; i++) {
+            var texto = document.getElementById("texto_indicador_" + i).innerText;
+            if (texto != 'Ninguno') {
+                arrayColumnas.push(texto);
+            }
+        }
+
+        llamar(arrayColumnas);
+    }
+
+    function llamar(arrayColumnas) {
+
+        const datos = [];
+        var nomtabla = document.getElementById("rango_fechas").innerText;
+        datos.push(nomtabla);
+        datos.push(arrayColumnas);
+
+        //console.log(datos);
+
+        //Destruyendo la instancia de datatable para crearla nuevamente con los datos nuevos extraidos del ajax que viene a continuacion..
+        $('#tablaExcel').dataTable({
+            "bDestroy": true
+        }).fnDestroy();
+
+
+        fetch('/graficarinout/' + datos)
+            .then(response => response.json())
+            .then(respuesta => {
+                var titulosTabla = respuesta[1];
+                var puntos = respuesta[2];
+                //console.log(JSON.stringify(puntos[0].inout_ndx));
+
+                primerGrafica(respuesta);
+                rellenarTabla(respuesta);
+
+            });
+
+
+        function primerGrafica(respuesta) {
+            var labels = respuesta[1];
+            var puntos = respuesta[2];
+            var ejes = respuesta[0];
+
+            const colores = [];
+            for (var i = 1; i <= 8; i++) {
+                var texto = document.getElementById("texto_indicador_" + i).innerText;
+                if (texto != 'No seleccionado') {
+                    colores.push(document.getElementById("colorSeleccionado_" + i).innerText);
+                }
+            }
+
+            //console.log(colores);
+
+            var chart = c3.generate({
+
+                bindto: '#dbchart',
+                data: {
+                    x: 'horas',
+                    xFormat: '%Y-%m-%d %H:%M:%S',
+                    json: puntos,
+                    keys: {
+                        x: 'horas',
+                        value: labels[0]
+                    }
+                },
+                color: {
+                    pattern: colores
+                },
+
+                point: {
+                    show: true,
+                    r: 1,
+                    focus: {
+                        expand: {
+                            enabled: true,
+                            r: 5
+                        }
+                    },
+                },
+                axis: {
+                    x: {
+
+                        type: 'timeseries',
+                        tick: {
+                            format: '%H:%M:%S %Y-%m-%d',
+                            centered: true,
+                            multiline: true,
+                            rotate: 0,
+                            fit: false, // Los labels se adaptan al ancho de la pantalla
+                            outer: true,
+                        },
+                        padding: {
+                            right: 12
+                        },
+                        height: 68,
+
+                        label: { // ADD
+                            text: ejes['x'],
+                            position: 'middle'
+                        }
+                    },
+                    rotated: false,
+                    y: {
+                        min: 0,
+                        max: 2,
+
+                        tick: {
+                            // format: d3.format('d')
+                            format: function(d) {
+                                if (Math.floor(d) != d) {
+                                    return;
+                                }
+                                return d;
+                            }
+                        },
+                        padding: {
+                            top: 2,
+                            bottom: 0
+                        },
+
+
+                        label: { // ADD
+
+                            text: ejes['y'],
+                            position: 'outer-middle'
+                        },
+
+                    }
+
+                },
+                zoom: {
+                    enabled: true
+                }
+
+            });
+        }
+
+        function rellenarTabla(respuesta) {
+            var titulos = respuesta[3]; //obteniendo los nombres de las columnas
+            var puntos = respuesta[2]; //Obteniendo los valores de las columnas
+            //console.log(puntos);
+
+            encabezado.innerHTML = ''
+            tablacontenido.innerHTML = ''
+
+            switch (titulos.length) {
+                case 1:
+                    //Iterador para introducir los nombre de las plumas en las columnas de la tabla como encabezado
+                    for (let i = 0; i < titulos.length; i++) {
+                        encabezado.innerHTML = `
+                        <tr>
+                            <th> ${ titulos[0] } </th>
+                            <th> Fecha y Hora </th>
+                        </tr>`;
+                    }
+                    // Iterador para introducir las filas de las plumas seleccionadas
+                    var pluma1 = titulos[0]
+                        .trim(); //Se selecciona en el indice 0, debido a que en este caso solo habra 1 pluma seleccionada.
+                    for (let i = 0; i < puntos.length; i++) {
+                        tablacontenido.innerHTML += `
+                        <tr>
+                            <td> ${ puntos[i][pluma1] } </td>
+                            <td> ${ puntos[i].horas } </td>
+                        </tr>`;
+
+                    }
+
+                    break;
+                case 2:
+                    for (let i = 0; i < titulos.length; i++) {
+                        encabezado.innerHTML = `
+                        <tr>
+                            <th> ${ titulos[0] } </th>
+                            <th> ${ titulos[1] } </th>
+                            <th> Fecha y Hora </th>
+                        </tr>`;
+                    }
+                    var pluma1 = titulos[0].trim();
+                    var pluma2 = titulos[1].trim();
+                    for (let i = 0; i < puntos.length; i++) {
+                        tablacontenido.innerHTML += `
+                            <tr>
+                                <td> ${ puntos[i][pluma1] } </td>
+                                <td> ${ puntos[i][pluma2] } </td>
+                                <td> ${ puntos[i].horas } </td>
+                            </tr>`;
+
+                    }
+                    break;
+                case 3:
+                    for (let i = 0; i < titulos.length; i++) {
+                        encabezado.innerHTML = `
+                        <tr>
+                            <th> ${ titulos[0] } </th>
+                            <th> ${ titulos[1] } </th>
+                            <th> ${ titulos[2] } </th>
+                            <th> Fecha y Hora </th>
+                        </tr>`;
+                    }
+                    var pluma1 = titulos[0].trim();
+                    var pluma2 = titulos[1].trim();
+                    var pluma3 = titulos[2].trim();
+                    for (let i = 0; i < puntos.length; i++) {
+                        tablacontenido.innerHTML += `
+                            <tr>
+                                <td> ${ puntos[i][pluma1] } </td>
+                                <td> ${ puntos[i][pluma2] } </td>
+                                <td> ${ puntos[i][pluma3] } </td>
+                                <td> ${ puntos[i].horas } </td>
+                            </tr>`;
+
+                    }
+                    break;
+                case 4:
+                    for (let i = 0; i < titulos.length; i++) {
+                        encabezado.innerHTML = `
+                        <tr>
+                            <th> ${ titulos[0] } </th>
+                            <th> ${ titulos[1] } </th>
+                            <th> ${ titulos[2] } </th>
+                            <th> ${ titulos[3] } </th>
+                            <th> Fecha y Hora </th>
+                        </tr>`;
+                    }
+                    var pluma1 = titulos[0].trim();
+                    var pluma2 = titulos[1].trim();
+                    var pluma3 = titulos[2].trim();
+                    var pluma4 = titulos[3].trim();
+                    for (let i = 0; i < puntos.length; i++) {
+                        tablacontenido.innerHTML += `
+                            <tr>
+                                <td> ${ puntos[i][pluma1] } </td>
+                                <td> ${ puntos[i][pluma2] } </td>
+                                <td> ${ puntos[i][pluma3] } </td>
+                                <td> ${ puntos[i][pluma4] } </td>
+                                <td> ${ puntos[i].horas } </td>
+                            </tr>`;
+
+                    }
+                    break;
+                case 5:
+                    for (let i = 0; i < titulos.length; i++) {
+                        encabezado.innerHTML = `
+                        <tr>
+                            <th> ${ titulos[0] } </th>
+                            <th> ${ titulos[1] } </th>
+                            <th> ${ titulos[2] } </th>
+                            <th> ${ titulos[3] } </th>
+                            <th> ${ titulos[4] } </th>
+                            <th> Fecha y Hora </th>
+                        </tr>`;
+                    }
+                    var pluma1 = titulos[0].trim();
+                    var pluma2 = titulos[1].trim();
+                    var pluma3 = titulos[2].trim();
+                    var pluma4 = titulos[3].trim();
+                    var pluma5 = titulos[4].trim();
+                    for (let i = 0; i < puntos.length; i++) {
+                        tablacontenido.innerHTML += `
+                            <tr>
+                                <td> ${ puntos[i][pluma1] } </td>
+                                <td> ${ puntos[i][pluma2] } </td>
+                                <td> ${ puntos[i][pluma3] } </td>
+                                <td> ${ puntos[i][pluma4] } </td>
+                                <td> ${ puntos[i][pluma5] } </td>
+                                <td> ${ puntos[i].horas } </td>
+                            </tr>`;
+
+                    }
+                    break;
+                case 6:
+                    for (let i = 0; i < titulos.length; i++) {
+                        encabezado.innerHTML = `
+                        <tr>
+                            <th> ${ titulos[0] } </th>
+                            <th> ${ titulos[1] } </th>
+                            <th> ${ titulos[2] } </th>
+                            <th> ${ titulos[3] } </th>
+                            <th> ${ titulos[4] } </th>
+                            <th> ${ titulos[5] } </th>
+                            <th> Fecha y Hora </th>
+                        </tr>`;
+                    }
+                    var pluma1 = titulos[0].trim();
+                    var pluma2 = titulos[1].trim();
+                    var pluma3 = titulos[2].trim();
+                    var pluma4 = titulos[3].trim();
+                    var pluma5 = titulos[4].trim();
+                    var pluma6 = titulos[5].trim();
+                    for (let i = 0; i < puntos.length; i++) {
+                        tablacontenido.innerHTML += `
+                            <tr>
+                                <td> ${ puntos[i][pluma1] } </td>
+                                <td> ${ puntos[i][pluma2] } </td>
+                                <td> ${ puntos[i][pluma3] } </td>
+                                <td> ${ puntos[i][pluma4] } </td>
+                                <td> ${ puntos[i][pluma5] } </td>
+                                <td> ${ puntos[i][pluma6] } </td>
+                                <td> ${ puntos[i].horas } </td>
+                            </tr>`;
+
+                    }
+                    break;
+                case 7:
+                    for (let i = 0; i < titulos.length; i++) {
+                        encabezado.innerHTML = `
+                        <tr>
+                            <th> ${ titulos[0] } </th>
+                            <th> ${ titulos[1] } </th>
+                            <th> ${ titulos[2] } </th>
+                            <th> ${ titulos[3] } </th>
+                            <th> ${ titulos[4] } </th>
+                            <th> ${ titulos[5] } </th>
+                            <th> ${ titulos[6] } </th>
+                            <th> Fecha y Hora </th>
+                        </tr>`;
+                    }
+
+                    var pluma1 = titulos[0].trim();
+                    var pluma2 = titulos[1].trim();
+                    var pluma3 = titulos[2].trim();
+                    var pluma4 = titulos[3].trim();
+                    var pluma5 = titulos[4].trim();
+                    var pluma6 = titulos[5].trim();
+                    var pluma7 = titulos[6].trim();
+                    for (let i = 0; i < puntos.length; i++) {
+                        tablacontenido.innerHTML += `
+                            <tr>
+                                <td> ${ puntos[i][pluma1] } </td>
+                                <td> ${ puntos[i][pluma2] } </td>
+                                <td> ${ puntos[i][pluma3] } </td>
+                                <td> ${ puntos[i][pluma4] } </td>
+                                <td> ${ puntos[i][pluma5] } </td>
+                                <td> ${ puntos[i][pluma6] } </td>
+                                <td> ${ puntos[i][pluma7] } </td>
+                                <td> ${ puntos[i].horas } </td>
+                            </tr>`;
+
+                    }
+
+                    break;
+                case 8:
+                    for (let i = 0; i < titulos.length; i++) {
+                        encabezado.innerHTML = `
+                        <tr>
+                            <th> ${ titulos[0] } </th>
+                            <th> ${ titulos[1] } </th>
+                            <th> ${ titulos[2] } </th>
+                            <th> ${ titulos[3] } </th>
+                            <th> ${ titulos[4] } </th>
+                            <th> ${ titulos[5] } </th>
+                            <th> ${ titulos[6] } </th>
+                            <th> ${ titulos[7] } </th>
+                            <th> Fecha y Hora </th>
+                        </tr>`;
+                    }
+                    var pluma1 = titulos[0].trim();
+                    var pluma2 = titulos[1].trim();
+                    var pluma3 = titulos[2].trim();
+                    var pluma4 = titulos[3].trim();
+                    var pluma5 = titulos[4].trim();
+                    var pluma6 = titulos[5].trim();
+                    var pluma7 = titulos[6].trim();
+                    var pluma8 = titulos[7].trim();
+                    for (let i = 0; i < puntos.length; i++) {
+                        tablacontenido.innerHTML += `
+                            <tr>
+                                <td> ${ puntos[i][pluma1] } </td>
+                                <td> ${ puntos[i][pluma2] } </td>
+                                <td> ${ puntos[i][pluma3] } </td>
+                                <td> ${ puntos[i][pluma4] } </td>
+                                <td> ${ puntos[i][pluma5] } </td>
+                                <td> ${ puntos[i][pluma6] } </td>
+                                <td> ${ puntos[i][pluma7] } </td>
+                                <td> ${ puntos[i][pluma8] } </td>
+                                <td> ${ puntos[i].horas } </td>
+                            </tr>`;
+
+                    }
+                    break;
+            }
+
+            var nomarea = document.querySelector("#nomarea").innerText.trim();
+            var rango_fechas = document.querySelector("#fechas").innerText.trim();
+
+            //Haciendo instancia para poder poner los btn para descargar la tabla en excel
+            var table = $('#tablaExcel').DataTable({
+                dom: 'Bfrtip',
+                buttons: [{
+                        extend: 'csv',
+                        text: 'csv ',
+                        titleAttr: 'Exportar a CSV',
+                        className: 'btn btn-primary',
+                    },
+                    {
+                        //definimos estilos del boton de excel
+                        extend: "excel",
+                        text: 'Exportar a Excel',
+                        className: 'btn btn-outline-success',
+                        title: "Inout_" + nomarea + "_" + rango_fechas,
+
+                        pageStyle: {
+                            sheetPr: {
+                                pageSetUpPr: {
+                                    fitToPage: 1 // Fit the printing to the page
+                                }
+                            },
+                            printOptions: {
+                                horizontalCentered: true,
+                                verticalCentered: true,
+                            },
+                            pageSetup: {
+                                orientation: "landscape", // Orientacion
+                                paperSize: "9", // Tamaño del papel (1 = Legal, 9 = A4)
+                                fitToWidth: "1", // Ajustar al ancho de la página
+                                fitToHeight: "0", // Ajustar al alto de la página
+                            },
+                            pageMargins: {
+                                left: "0.2",
+                                right: "0.2",
+                                top: "0.4",
+                                bottom: "0.4",
+                                header: "0",
+                                footer: "0",
+                            },
+                            repeatHeading: true, // Repeat the heading row at the top of each page
+                            repeatCol: 'A:A', // Repeat column A (for pages wider than a single printed page)
+                        },
+                        excelStyles: {
+                            template: 'blue_medium', // Add a template style as well if you like
+                        }
+
+
+
+                    },
+
+                ],
+            });
+
+
+        }
+
+
+    }
+</script>
+
+
+<script>
+    $('.dropdown').each(function(index, dropdown) {
+        let search = $(dropdown).find('.search');
+        let items = $(dropdown).find('.dropdown-item');
+        $(search).on('input', function() {
+            filter($(search).val().trim().toLowerCase())
+        });
+
+        function filter(word) {
+            let length = items.length
+            let collection = []
+            let hidden = 0
+            for (let i = 0; i < length; i++) {
+                if (items[i].value.toString().toLowerCase().includes(word)) {
+                    $(items[i]).show()
+                } else {
+                    $(items[i]).hide()
+                    hidden++
+                }
+            }
+            if (hidden === length) {
+                $(dropdown).find('.dropdown_empty').show();
+            } else {
+                $(dropdown).find('.dropdown_empty').hide();
+            }
+        }
+
+        $(dropdown).find('.dropdown-menu').find('.menuItems_1').on('click', '.dropdown-item', function() {
+            //$(dropdown).find('.dropdown-toggle').text($(this)[0].value);
+            texto_indicador_1.innerHTML = ''
+            texto_indicador_1.innerHTML = $(this)[0].value;
+            $(dropdown).find('.dropdown-toggle').dropdown(
+                'toggle'); //Se quita el menu desplegable despues de escoger una accion
+        });
+
+        $(dropdown).find('.dropdown-menu').find('.menuItems_2').on('click', '.dropdown-item', function() {
+            texto_indicador_2.innerHTML = ''
+            texto_indicador_2.innerHTML = $(this)[0].value;
+            $(dropdown).find('.dropdown-toggle').dropdown(
+                'toggle'); //Se quita el menu desplegable despues de escoger una accion
+        });
+        $(dropdown).find('.dropdown-menu').find('.menuItems_3').on('click', '.dropdown-item', function() {
+            texto_indicador_3.innerHTML = ''
+            texto_indicador_3.innerHTML = $(this)[0].value;
+            $(dropdown).find('.dropdown-toggle').dropdown(
+                'toggle'); //Se quita el menu desplegable despues de escoger una accion
+        });
+        $(dropdown).find('.dropdown-menu').find('.menuItems_4').on('click', '.dropdown-item', function() {
+            texto_indicador_4.innerHTML = ''
+            texto_indicador_4.innerHTML = $(this)[0].value;
+            $(dropdown).find('.dropdown-toggle').dropdown(
+                'toggle'); //Se quita el menu desplegable despues de escoger una accion
+        });
+        $(dropdown).find('.dropdown-menu').find('.menuItems_5').on('click', '.dropdown-item', function() {
+            texto_indicador_5.innerHTML = ''
+            texto_indicador_5.innerHTML = $(this)[0].value;
+            $(dropdown).find('.dropdown-toggle').dropdown(
+                'toggle'); //Se quita el menu desplegable despues de escoger una accion
+        });
+        $(dropdown).find('.dropdown-menu').find('.menuItems_6').on('click', '.dropdown-item', function() {
+            texto_indicador_6.innerHTML = ''
+            texto_indicador_6.innerHTML = $(this)[0].value;
+            $(dropdown).find('.dropdown-toggle').dropdown(
+                'toggle'); //Se quita el menu desplegable despues de escoger una accion
+        });
+        $(dropdown).find('.dropdown-menu').find('.menuItems_7').on('click', '.dropdown-item', function() {
+            texto_indicador_7.innerHTML = ''
+            texto_indicador_7.innerHTML = $(this)[0].value;
+            $(dropdown).find('.dropdown-toggle').dropdown(
+                'toggle'); //Se quita el menu desplegable despues de escoger una accion
+        });
+        $(dropdown).find('.dropdown-menu').find('.menuItems_8').on('click', '.dropdown-item', function() {
+            texto_indicador_8.innerHTML = ''
+            texto_indicador_8.innerHTML = $(this)[0].value;
+            $(dropdown).find('.dropdown-toggle').dropdown(
+                'toggle'); //Se quita el menu desplegable despues de escoger una accion
+        });
+
+    });
+</script>
+
+
+<script src="{{ URL::asset('js/excel/jquery.js') }}"></script>
+<script src="{{ URL::asset('js/excel/jquery.min.js') }}"></script>
+<script src="{{ URL::asset('js/excel/jszip.min.js') }}"></script>
+<script src="{{ URL::asset('js/excel/dataTables.min.js') }}"></script>
+<script src="{{ URL::asset('js/excel/dataTables.buttons.min.js') }}"></script>
+<script src="{{ URL::asset('js/excel/buttons.html5.min.js') }}"></script>
+<script src="{{ URL::asset('js/excel/buttons.html5.styles.min.js') }}"></script>
+<script src="{{ URL::asset('js/excel/buttons.html5.styles.templates.min.js') }}"></script>
+
+
+
+<script>
+    $(document).ready(function() {
+        //$("#tablaExcel").dataTable().fnDestroy();
+        //Se pone aqui el metodo para poder exportar, ya que se actualizaron los datos atraves del ajax.
+
+        {{--  $(".buttons-excel").on('click', function() {
+            //console.log('Button activated');
+            //alert('Button activated');
+        });  --}}
+
+    });
+</script>
+
+<script>
+    function excel() {
+        if (document.getElementById("dbchart").style.display == "block") {
+            document.querySelector(".buttons-excel").click();
+        }
+    }
+</script>
